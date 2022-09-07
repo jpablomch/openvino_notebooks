@@ -16,6 +16,8 @@ import os
 import torch
 from torch import nn
 import time
+import warnings  # to disable warnings on export to ONNX
+warnings.filterwarnings("ignore", "DeprecationWarning")
 
 __all__ = ["MobileNetV2", "mobilenet_v2_cifar10"]
 
@@ -209,7 +211,8 @@ def train_epoch(train_loader, model, device, criterion, optimizer, epoch, compre
 
 
 ### Validate Function
-def validate(model, device, val_loader, criterion=nn.CrossEntropyLoss()):
+def validate(model, val_loader, criterion=nn.CrossEntropyLoss()):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     batch_time = AverageMeter("Time", ":3.3f")
     losses = AverageMeter("Loss", ":2.3f")
     top1 = AverageMeter("Acc@1", ":2.2f")
